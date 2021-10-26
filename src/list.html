@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <title>List Data | Flask Application</title>
+</head>
+<body>
+    <div id="page-nav">
+
+    </div>
+    <br>
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h3 class="display-4">
+                List Data
+                <hr class="my-4">
+                <p class="lead">
+                    Tela de Listagem de Dados
+                </p>
+            </h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Sobrenome</th>
+                    <th>Idade</th>
+                    <th>Data de Nascimento</th>
+                    <th>Estado</th>
+                    <th>Opções</th>
+                </tr>
+            </thead>
+            <tbody id="dados">
+
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/main_functions.js"></script>
+    <script>
+
+        $(() => {
+            $('#page-nav').html(getNavbar());
+            $.ajax({
+                url: "http://127.0.0.1:7700/users",
+                type: 'GET',
+                success: (data) => {
+                    let returns = '';
+                    for (value in data) {
+                        const date = new Date(data[value].birthdate)
+                        const format_date = (`${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`)
+                        returns += `
+                            <tr>
+                                <td>${data[value].name}</td>
+                                <td>${data[value].surname}</td>
+                                <td>${data[value].age}</td>
+                                <td>${format_date}</td>
+                                <td>${data[value].state}</td>
+                                <td>
+                                    <a href="edit.html?id=${data[value].id}" target="_blank" class="btn btn-success">Editar Usuário</a>
+                                    <a href="#" class="btn btn-danger" onclick="deletar_usuario(${data[value].id})">Deletar Usuário</a>
+                                </td>
+                            </tr>
+                        `
+                    }
+                    $('#dados').html(returns);
+                }
+            });
+        });
+
+        const deletar_usuario = (id) => {
+            $.ajax({
+                url: `http://127.0.0.1:7700/users/${id}`,
+                type: "DELETE",
+                success: data => {
+                    setTimeout(() => {
+                        alert("Deletado com sucesso!");
+                        location.reload();
+                    }, 2000);
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
