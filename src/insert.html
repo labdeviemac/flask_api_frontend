@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <title>Update Data | Flask Application</title>
+    <title>Document</title>
 </head>
 
 <body>
@@ -14,7 +14,7 @@
     <div id="page-nav">
 
     </div>
-    
+
     <br>
 
     <div class="container mt-4">
@@ -24,7 +24,7 @@
                 Update Data
                 <hr class="my-4">
                 <p class="lead">
-                    Tela para Atualização de Dados
+                    Tela para Inserção de Dados
                 </p>
             </h3>
         </div>
@@ -63,60 +63,41 @@
             </div>
             <br>
             <div class="col-12 d-flex justify-content-center">
-                <button type="button" class="btn btn-success" onclick="update_data()">Update Data</button>
+                <button type="button" class="btn btn-success" onclick="inserir_usuario()">Save Data</button>
             </div>
         </form>
-    </div>
 
-    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="static/js/main_functions.js"></script>
-    <script>
-        $(() => {
-            $('#page-nav').html(getNavbar());
-        });
+        <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="static/js/main_functions.js"></script>
+        <script>
+            function inserir_usuario() {
+                const name = $('#name').val();
+                const surname = $('#surname').val();
+                const age = $('#age').val();
+                const birthdate = $('#birthdate').val();
+                const state_id = $('#state_id').val();
 
-        let searchParam = new URLSearchParams(window.location.search);
-        let id = searchParam.get('id');
-        $.ajax({
-            url: `http://127.0.0.1:7700/users/${id}`,
-            type: "GET",
-            success: data => {
-                $('#name').val(data.name);
-                $('#surname').val(data.surname);
-                $('#age').val(data.age);
-                $('#birthdate').val(data.birthdate);
-                $('#state').val(data.state_name);
-                $('#state_code').val(data.state_id);
+                let dados = new FormData();
+                dados.append('name', name);
+                dados.append('surname', surname);
+                dados.append('age', age);
+                dados.append('birthdate', birthdate);
+                dados.append('state', state_id);
+
+                $.ajax({
+                    url: "http://127.0.0.1:7700/users",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: dados,
+                    success: function (data) {
+                        alert("Dados salvos com sucesso!");
+                        location.reload();
+                    }
+                });
             }
-        });
-
-        const update_data = () => {
-            const name = $('#name').val();
-            const surname = $('#surname').val();
-            const age = $('#age').val();
-            const birthdate = $('#birthdate').val();
-            const state_code = $('#state_code').val();
-
-            $.ajax({
-                url: `http://127.0.0.1:7700/users/${id}`,
-                type: "PUT",
-                data: {
-                    "name": name,
-                    "surname": surname,
-                    "age": Number(age),
-                    "birthdate": birthdate,
-                    "state": Number(state_code)
-                },
-                success: function(data) {
-                    setTimeout(() => {
-                        alert("Dados atualizados com sucesso!");
-                        location.href = "list.html";
-                    }, 2000);
-                }
-            });
-        }
-    </script>
+        </script>
 </body>
 
 </html>
